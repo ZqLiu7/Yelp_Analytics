@@ -38,8 +38,8 @@ def process_business_data(json_file, all_attributes):
     '''
     business_data = defaultdict(list)
     for line in json_file:
+        attribute_set = set()
         for key_level_1, values_level_1 in json.loads(line).items():
-            attribute_set = set()
             if type(values_level_1) != dict:
                 business_data[key_level_1].append(values_level_1)
                 attribute_set.add(key_level_1)
@@ -55,7 +55,7 @@ def process_business_data(json_file, all_attributes):
                         composite_key = key_level_1 + '_' + key_level_2
                         business_data[composite_key].append(values_level_2)
                         attribute_set.add(composite_key)
-            null_variable = list(all_attributes - attribute_set)
-            for key in null_variable:
-                business_data[key].append('')
+        null_variable = list(all_attributes - attribute_set)
+        for key in null_variable:
+            business_data[key].append('')
     return business_data
