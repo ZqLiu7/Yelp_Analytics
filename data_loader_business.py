@@ -7,8 +7,9 @@ from collections import defaultdict
 def load_business_data_df(file_path='yelp_academic_dataset_business.json'):
     with open(file_path, 'r') as json_file:
         all_attributes = get_all_attributes(json_file)
+    with open(file_path, 'r') as json_file:
         data_dict = process_business_data(json_file, all_attributes)
-        return pd.DataFrame(data_dict)
+    return pd.DataFrame(data_dict)
 
 
 def get_all_attributes(json_file):
@@ -18,7 +19,7 @@ def get_all_attributes(json_file):
             if type(value_level_1) != dict:
                 all_attributes.add(key_level_1)
             else:
-                for key_level_2, value_level_2 in json.loads(line).items():
+                for key_level_2, value_level_2 in value_level_1.items():
                     if len(value_level_2) > 0 and value_level_2[0] == '{':
                         sub_data = ast.literal_eval(value_level_2)
                         for key_level_3, value_level_3 in sub_data.items():
