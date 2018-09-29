@@ -1,6 +1,10 @@
 from nltk.corpus import stopwords
 from nltk.stem import LancasterStemmer, WordNetLemmatizer
 from string import digits, punctuation
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix
 
 def text_processing(string):
     remove_digits = str.maketrans('', '', digits)
@@ -23,6 +27,29 @@ def text_processing(string):
     # call stemmer
     stemmed_words = [stemmer.stem(word) for word in lemmatized_words]
     return ( " ".join(stemmed_words))
+
+def data_processing(df):
+    df_new=df[df.stars.isin([1,5])]
+    text=df_new.text
+    y=df_new.stars
+    text.index=df_new.shape[0]
+    sample_reviews=[]
+    for i in range(0, text.size):
+        sample_reviews.append(text_processing(text[i]))
+    return(sample_reviews)
+
+tfidf_vectorizer = TfidfVectorizer()
+X=tfidf_vectorizer.fit_transform(sample_reviews)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+
+logreg = LogisticRegression()
+logreg.fit(X_train, y_train)
+y_pred = logreg.predict(X_test)
+score = logreg.score(X_test, y_test)
+print(score)
+
+confusion_matrix = confusion_matrix(y_test, y_pred)
+print(confusion_matrix)
 
 
 
