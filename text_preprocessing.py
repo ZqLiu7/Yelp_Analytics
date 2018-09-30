@@ -4,7 +4,7 @@ from string import digits, punctuation
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix
+from sklearn.svm import LinearSVC
 
 def text_processing(string):
     remove_digits = str.maketrans('', '', digits)
@@ -38,18 +38,18 @@ def data_processing(df):
         sample_reviews.append(text_processing(text[i]))
     return(sample_reviews)
 
-tfidf_vectorizer = TfidfVectorizer()
+tfidf_vectorizer = TfidfVectorizer(ngram_range=(1,2))
 X=tfidf_vectorizer.fit_transform(sample_reviews)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
 
 logreg = LogisticRegression()
 logreg.fit(X_train, y_train)
 y_pred = logreg.predict(X_test)
-score = logreg.score(X_test, y_test)
-print(score)
+score_log = logreg.score(X_test, y_test)
+print(score_log)
 
-confusion_matrix = confusion_matrix(y_test, y_pred)
-print(confusion_matrix)
-
-
-
+svm = LinearSVC(C=1)
+svm.fit(X_train, y_train)
+y_pred = svm.predict(X_test)
+score_svm = svm.score(X_test, y_test)
+print(score_svm)
